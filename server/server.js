@@ -7,13 +7,16 @@ const { ApolloServer } = require('apollo-server-express');
 // import our typeDefs and resolvers
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core');
 
 const PORT = process.env.PORT || 3001;
 // create a new Apollo server and pass in our schema data
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: authMiddleware
+  context: authMiddleware,
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground({embed: true})],
+  playground: true
 });
 
 const app = express();
@@ -27,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
 // Create a new instance of an Apollo server with the GraphQL schema
